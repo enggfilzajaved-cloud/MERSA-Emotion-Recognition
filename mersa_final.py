@@ -1,17 +1,3 @@
-"""
-MERSA - Multimodal Emotion Recognition System for Older Adults
-INF2102 - Final Programming Project - 2026.1 - 3WA
-Author: Filza Javed | PUC-Rio
-
-Modes:
-    --demo                        Simulated multimodal output
-    --image photo.jpg             Face only analysis
-    --voice                       Voice only analysis
-    --image photo.jpg --voice     Face + Voice combined (multimodal fusion)
-
-Requirements:
-    pip install deepface opencv-python pyaudio librosa soundfile
-"""
 
 import argparse
 import sys
