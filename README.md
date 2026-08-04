@@ -46,6 +46,6 @@ Tested on the complete official RAVDESS speech set (1,440 files, 24 actors, 8 em
 
 The original rule-based voice module performed close to chance level (~14.3% for 7 classes). It was replaced with a trained classifier, nearly tripling accuracy. Full methodology and per-class results are available in the project report.
 ## Data & Privacy
-All data is processed and stored locally — nothing is transmitted externally. 
+All data is processed and stored locally; nothing is transmitted externally. 
 This prototype uses only open datasets (FER2013, RAVDESS); direct testing 
 with real users will require prior approval from Plataforma Brasil.
