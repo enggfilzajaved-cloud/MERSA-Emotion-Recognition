@@ -61,20 +61,7 @@ Tested on the complete official RAVDESS speech set (1,440 files, 24 actors, 8 em
 | **v2 (current)** | **40.00%** (120/300, held-out actors) | Trained Random Forest on 156 features, actor-independent test split |
 
 The original rule-based voice module performed close to chance level (~14.3% for 7 classes). It was replaced with a trained classifier, nearly tripling accuracy. Full methodology and per-class results are available in the project report.
-
-## Ethical Aspects and Data Collection
-MERSA processes two types of sensitive personal data during operation: facial images (via webcam) and voice recordings (via microphone). Both are collected only during active use of the application, with the user's knowledge and direct involvement.
-
-All data is processed and stored **locally on the user's own device**. No facial images, audio recordings, or derived emotion data are transmitted externally at any point in the current prototype. This local-first design minimizes privacy risk, given the sensitivity of biometric data and the vulnerability of the target population (older adults).
-
-The current version is a technical proof-of-concept, validated using open, publicly available datasets (FER2013, RAVDESS) rather than data from human participants. As this research moves toward direct testing with real users — particularly older adults and, as part of my broader PhD research, individuals with Alzheimer's disease or other forms of dementia — I will submit the project for review and approval to **Plataforma Brasil**, the Brazilian national platform for the ethical review of research involving human subjects, before any such data collection.
-
-## Future Work
-- Real-time camera integration
-- Further improve the voice classifier (data augmentation, larger training set, deep learning architecture)
-- Android mobile application
-- Behavioural modality (touch patterns, navigation)
-- Validation with the target population (older adults, dementia patients) following ethics approval
-
-## License
-MIT License
+## Data & Privacy
+All data is processed and stored locally — nothing is transmitted externally. 
+This prototype uses only open datasets (FER2013, RAVDESS); direct testing 
+with real users will require prior approval from Plataforma Brasil.
