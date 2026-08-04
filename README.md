@@ -27,20 +27,9 @@ Future user studies will be submitted to Plataforma Brasil (CEP/CONEP).
 
 ## How it Works
 MERSA uses a three-stage pipeline:
-1. **Face Analysis** — DeepFace detects facial landmarks and classifies emotion into 7 categories (happy, sad, angry, fear, surprise, neutral, disgust)
-2. **Voice Analysis** — librosa extracts acoustic features (energy, pitch, zero-crossing rate, MFCCs, chroma, mel-spectrogram) from a 5-second microphone recording, classified using a trained Random Forest model (see Model Comparison below)
+1. **Face Analysis** DeepFace detects facial landmarks and classifies emotion into 7 categories (happy, sad, angry, fear, surprise, neutral, disgust)
+2. **Voice Analysis** librosa extracts acoustic features (energy, pitch, zero-crossing rate, MFCCs, chroma, mel-spectrogram) from a 5-second microphone recording, classified using a trained Random Forest model (see Model Comparison below)
 3. **Fusion** — combines face (60%) and voice (40%) scores for a final emotion decision
-
-## Adaptive Interface Recommendations
-Based on the detected emotion, MERSA suggests:
-- Font size adjustment
-- Colour theme change
-- Help prompt activation
-
-## Session Logging
-Every analysis is saved to `mersa_session_log.json` for longitudinal wellbeing monitoring. All data is processed and stored locally — no facial images, audio recordings, or derived emotion data are transmitted to external servers, cloud services, or third parties. Session logs use anonymous session identifiers only; no personally identifying metadata is collected or linked.
-
-## Test Results
 
 ### Face Module
 Tested on 140 real, labeled images from the official FER2013 "PrivateTest" partition (20 images per emotion, 7 emotions).
