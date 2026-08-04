@@ -20,11 +20,6 @@ is part of ongoing PhD research on emotion-aware intelligent interfaces.
 - soundfile
 - scikit-learn
 - joblib
-
-## Installation
-All data is stored locally — no personal data sent to external servers.
-Future user studies will be submitted to Plataforma Brasil (CEP/CONEP).
-
 ## How it Works
 MERSA uses a three-stage pipeline:
 1. **Face Analysis** DeepFace detects facial landmarks and classifies emotion into 7 categories (happy, sad, angry, fear, surprise, neutral, disgust)
