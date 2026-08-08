@@ -42,7 +42,7 @@ Tested on the complete official RAVDESS speech set (1,440 files, 24 actors, 8 em
 | Version | Accuracy | Method |
 |---------|----------|--------|
 | v1 (original) | 13.89% (200/1,440) | Fixed rule-based thresholds on 3 features |
-| **v2 (current)** | **40.00%** (120/300, held-out actors) | Trained Random Forest on 156 features, actor-independent test split |
+| **v2 (current)** | **38.33%** (115/300, held-out actors) | Trained Random Forest on 156 features, actor-independent test split |
 
 The original rule-based voice module performed close to chance level (~14.3% for 7 classes). It was replaced with a trained classifier, nearly tripling accuracy. Full methodology and per-class results are available in the project report.
 ## Data & Privacy
