@@ -7,6 +7,10 @@ import time
 import wave
 from datetime import datetime
 
+import numpy as np
+import librosa
+import joblib
+
 ADAPTATIONS = {
     "happy": {
         "description": "User appears happy and engaged.",
@@ -49,6 +53,12 @@ EMOTION_WEIGHTS = {
     "angry": 1.3, "sad": 1.2, "fear": 1.2, "disgust": 1.1,
     "happy": 1.0, "surprise": 1.0, "neutral": 0.9
 }
+
+# load voice model once at import so it's not reloading on every call
+_here = os.path.dirname(os.path.abspath(__file__))
+_voice_clf = joblib.load(os.path.join(_here, "mersa_voice_classifier.joblib"))
+_voice_scaler = joblib.load(os.path.join(_here, "mersa_voice_scaler.joblib"))
+_voice_labels = _voice_clf.classes_
 
 
 # ── FACE ANALYSIS ─────────────────────────────────────────────────────────────
@@ -110,42 +120,34 @@ def record_voice(duration=5, sample_rate=22050):
         return {"success": False, "error": str(e)}
 
 
-# ── VOICE ANALYSIS ────────────────────────────────────────────────────────────
+# ── VOICE ANALYSIS (v2, trained model) ────────────────────────────────────────
 def analyze_voice(audio_path):
     try:
-        import librosa
-        import numpy as np
         print("\n  [VOICE] Extracting acoustic features...")
 
         y, sr = librosa.load(audio_path, sr=22050)
+
         rms = float(np.mean(librosa.feature.rms(y=y)))
         pitches, magnitudes = librosa.piptrack(y=y, sr=sr)
         pitch_values = pitches[magnitudes > np.median(magnitudes)]
         mean_pitch = float(np.mean(pitch_values)) if len(pitch_values) > 0 else 0
         zcr = float(np.mean(librosa.feature.zero_crossing_rate(y)))
 
+        # has to match the feature order used when I trained the model
+        mfcc = np.mean(librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13), axis=1).tolist()
+        stft = np.abs(librosa.stft(y))
+        chroma = np.mean(librosa.feature.chroma_stft(S=stft, sr=sr), axis=1).tolist()
+        mel = np.mean(librosa.feature.melspectrogram(y=y, sr=sr), axis=1).tolist()
+
         print(f"  [VOICE] Energy={rms:.4f} | Pitch={mean_pitch:.1f}Hz | ZCR={zcr:.4f}")
 
-        scores = {"angry": 0.0, "sad": 0.0, "happy": 0.0, "neutral": 0.0,
-                  "fear": 0.0, "surprise": 0.0, "disgust": 0.0}
+        features = np.array([[rms, mean_pitch, zcr] + mfcc + chroma + mel])
+        features = _voice_scaler.transform(features)
 
-        if rms > 0.05 and mean_pitch > 200:
-            scores = {"angry": 55.0, "surprise": 20.0, "happy": 10.0,
-                      "neutral": 10.0, "fear": 3.0, "sad": 1.0, "disgust": 1.0}
-        elif rms < 0.02 and mean_pitch < 150:
-            scores = {"sad": 50.0, "neutral": 30.0, "fear": 10.0,
-                      "disgust": 5.0, "angry": 3.0, "happy": 1.0, "surprise": 1.0}
-        elif rms > 0.03 and zcr > 0.08:
-            scores = {"happy": 50.0, "surprise": 25.0, "neutral": 15.0,
-                      "angry": 5.0, "fear": 3.0, "sad": 1.0, "disgust": 1.0}
-        elif rms < 0.03 and mean_pitch > 180:
-            scores = {"fear": 45.0, "sad": 25.0, "neutral": 15.0,
-                      "surprise": 10.0, "angry": 3.0, "happy": 1.0, "disgust": 1.0}
-        else:
-            scores = {"neutral": 50.0, "sad": 20.0, "happy": 15.0,
-                      "angry": 8.0, "fear": 4.0, "surprise": 2.0, "disgust": 1.0}
+        probs = _voice_clf.predict_proba(features)[0]
+        scores = {str(lab): round(float(p) * 100, 1) for lab, p in zip(_voice_labels, probs)}
+        dominant = str(max(scores, key=scores.get))
 
-        dominant = max(scores, key=scores.get)
         return {
             "success": True,
             "dominant_emotion": dominant,
@@ -399,17 +401,6 @@ def main():
     parser.add_argument("--voice", action="store_true", help="Enable voice analysis")
     parser.add_argument("--demo", action="store_true", help="Run in demo mode")
     args = parser.parse_args()
-
-    print("\n  ╔══════════════════════════════════════════════════╗")
-    print("  ║   MERSA - Multimodal Emotion Recognition System ║")
-    print("  ║   INF2102 - PUC-Rio - 2026.1 - 3WA             ║")
-    print("  ║   Author: Filza Javed                           ║")
-    print("  ╚══════════════════════════════════════════════════╝")
-    print("\n  Available modes:")
-    print("    --demo                        Simulated output")
-    print("    --image photo.jpg             Face only")
-    print("    --voice                       Voice only")
-    print("    --image photo.jpg --voice     Face + Voice combined")
 
     if args.demo:
         run_demo()
