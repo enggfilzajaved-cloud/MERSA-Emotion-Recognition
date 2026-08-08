@@ -1,0 +1,7 @@
+deepface
+opencv-python
+pyaudio
+librosa
+soundfile
+scikit-learn
+joblib
